@@ -1,3 +1,6 @@
+⚠️ This project is based on [gmrqs/lasagna](https://github.com/gmrqs/lasagna).  
+I have modified the Docker setup to work with Spark 3.5.6, Java 17, and MinIO.
+
 ![alt text](docs/pastabricks-2.png "Lasagna")
 Lasagna (or _pastabricks_) is a interactive development environment I built to learn and practice PySpark.
 
