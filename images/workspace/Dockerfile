@@ -15,7 +15,11 @@ RUN apt-get install curl -y
 #| Installing Python pip |
 #+------------------------+
 
-RUN apt-get install python3-pip -y
+# RUN apt-get install python3-pip -y
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* \
+    && apt-get update --fix-missing \
+    && apt-get install -y --no-install-recommends python3-pip
+
 RUN pip install --upgrade pip
 
 #+-----------------------+

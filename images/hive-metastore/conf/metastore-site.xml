@@ -1,21 +1,28 @@
 <configuration>
+    <!-- Hive Metastore endpoint -->
     <property>
         <name>metastore.thrift.uris</name>
         <value>thrift://0.0.0.0:9083</value>
-        <description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.</description>
     </property>
+
+    <!-- Task settings -->
     <property>
         <name>metastore.task.threads.always</name>
         <value>org.apache.hadoop.hive.metastore.events.EventCleanerTask,org.apache.hadoop.hive.metastore.MaterializationsCacheCleanerTask</value>
     </property>
+
     <property>
         <name>metastore.expression.proxy</name>
         <value>org.apache.hadoop.hive.metastore.DefaultPartitionExpressionProxy</value>
     </property>
+
+    <!-- Data warehouse location on MinIO -->
     <property>
         <name>metastore.warehouse.dir</name>
         <value>s3a://warehouse/</value>
     </property>
+
+    <!-- PostgreSQL JDBC config -->
     <property>
         <name>javax.jdo.option.ConnectionDriverName</name>
         <value>org.postgresql.Driver</value>
@@ -36,23 +43,40 @@
         <value>hive123</value>
     </property>
 
+    <!-- MinIO (S3-compatible) config -->
     <property>
         <name>fs.s3a.access.key</name>
         <value>admin</value>
     </property>
+
     <property>
         <name>fs.s3a.secret.key</name>
         <value>password</value>
     </property>
+
     <property>
         <name>fs.s3a.endpoint</name>
         <value>http://minio:9000</value>
     </property>
+
     <property>
         <name>fs.s3a.path.style.access</name>
         <value>true</value>
     </property>
 
+    <!-- Schema auto creation: useful for Iceberg -->
+    <property>
+        <name>datanucleus.autoCreateSchema</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>datanucleus.schema.autoCreateAll</name>
+        <value>true</value>
+    </property>
+
+    <!-- Optional: For Delta Lake -->
+    <!--
     <property>
         <name>hive.input.format</name>
         <value>io.delta.hive.HiveInputFormat</value>
@@ -62,5 +86,5 @@
         <name>hive.tez.input.format</name>
         <value>io.delta.hive.HiveInputFormat</value>
     </property>
-
+    -->
 </configuration>

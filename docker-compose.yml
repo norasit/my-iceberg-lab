@@ -1,3 +1,5 @@
+version: '3.7'
+
 services:
   minio:
     container_name: minio
@@ -14,6 +16,21 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
     command: server /data --console-address ":9090"
+
+  minio-client:
+    image: minio/mc
+    container_name: minio-client
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      mc alias set myminio http://minio:9000 admin password;
+      mc mb -p myminio/warehouse || true;
+      exit 0;"
+    networks:
+      - my_network
+
   postgres:
     container_name: postgres
     image: postgres:14.2-alpine
@@ -29,6 +46,7 @@ services:
       - my_network
     volumes:
       - ./mount/postgres/data:/var/lib/postgresql/data
+
   hive-metastore:
     container_name: hive-metastore
     build: ./images/hive-metastore
@@ -39,6 +57,7 @@ services:
     networks:
       - my_network
     restart: always
+
   spark-master:
     container_name: spark-master
     build: ./images/spark
@@ -53,7 +72,8 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
       - SPARK_LOCAL_IP=spark-master
-    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.master.Master --ip spark-master --port 7077 --webui-port 5050
+    command: /usr/local/spark/bin/spark-class org.apache.spark.deploy.master.Master --ip spark-master --port 7077 --webui-port 5050
+
   spark-worker-a:
     container_name: spark-worker-a
     build: ./images/spark
@@ -67,7 +87,8 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
       - SPARK_LOCAL_IP=spark-worker-a
-    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 5051 spark://spark-master:7077
+    command: /usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 5051 spark://spark-master:7077
+
   spark-worker-b:
     container_name: spark-worker-b
     build: ./images/spark
@@ -81,7 +102,8 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
       - SPARK_LOCAL_IP=spark-worker-b
-    command: usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 5052 spark://spark-master:7077
+    command: /usr/local/spark/bin/spark-class org.apache.spark.deploy.worker.Worker --webui-port 5052 spark://spark-master:7077
+
   workspace:
     container_name: workspace
     build: ./images/workspace
@@ -98,6 +120,7 @@ services:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
     command: jupyter lab --port 8888 --LabApp.token=''
+
   trino:
     container_name: trino
     build: ./images/trino
@@ -110,6 +133,7 @@ services:
     environment:
       - MINIO_ROOT_USER=admin
       - MINIO_ROOT_PASSWORD=password
+
 networks:
   my_network:
     driver: bridge

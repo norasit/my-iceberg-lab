@@ -21,6 +21,12 @@ RUN curl -O https://archive.apache.org/dist/spark/spark-3.5.6/spark-3.5.6-bin-ha
 ENV SPARK_HOME=/usr/local/spark
 ENV PATH="${SPARK_HOME}/bin:$PATH"
 
+#+------------------------+
+#| COPY spark-defaults.conf |
+#+------------------------+
+
+COPY spark-defaults.conf ${SPARK_HOME}/conf/
+
 #+----------------------------------+
 #| Instalando dependências S3/MinIO |
 #+----------------------------------+
@@ -38,7 +44,7 @@ RUN curl https://jdbc.postgresql.org/download/postgresql-42.5.0.jar \
 #| Instalando dependências para Apache Iceberg |
 #+---------------------------------------------+
 
-# RUN curl https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.2_2.13/1.3.0/iceberg-spark-runtime-3.2_2.13-1.3.0.jar \
-#     --output ${SPARK_HOME}/jars/iceberg-spark-runtime-3.2_2.13-1.3.0.jar
+RUN curl -L https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.5.0/iceberg-spark-runtime-3.5_2.12-1.5.0.jar \
+    --output ${SPARK_HOME}/jars/iceberg-spark-runtime-3.5_2.12-1.5.0.jar
 
 USER root
